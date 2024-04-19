@@ -1,44 +1,37 @@
 import pandas as pd
 
-#Accedemos al archivo csv donde tenemos una tabla con los nombres y edades de 30 personas.
-dataFrame = pd.read_csv("edades.csv")
-edades =  list(dataFrame["fi"])
+# Lista de las edades de los alumnos
+edades = [18, 19, 20, 21, 22, 23, 25, 28, 29, 30, 34]
 
-#Definimos lafuncion principal del archivo:
-def analisis_estadistico(lista_edades):
 
-    # Verificamos que la lista no esté vacía.
-    if not lista_edades:
-        print("Error: La lista está vacía")
-    # Verificamos que el argumento proporcionado sea una lista.
-    if not isinstance(lista_edades, list):
-        print("Error: El argumento proporcionado no es una lista")
-    # Verificamos que la lista contenga solo elementos numéricos.
-    if not all(isinstance(item, (int, float)) for item in lista_edades):
-        print("Error: La lista contiene elementos no numéricos")
+def analisis_estadistico(edades):
+    # Verificar si edades no es una lista o está vacía, si es así, imprimir mensaje de error.
+    if not isinstance(edades, list) or len(edades) == 0:
+        print("La lista de edades está vacía o el parámetro no es una lista")
+        return None
+    # Frecuencia Simple: Veces que se repiten esas edades, en el mismo orden.
 
-    
-    # Considerando que el archivo csv tiene una columna llamada 'fi' que representa la frecuencia absoluta de cada dato, nos queda calcular la frecuencia acumulada, que es la suma total de los valores de la frecuencia absoluta.
-    dataFrame["Fi"] = dataFrame["fi"].cumsum()
+    # Verificar si todas las edades son numéricas, en caso de que no sea así, imprimir mensaje de error.
+    if not all(isinstance(x, (int, float)) for x in edades):
+        print("La lista de edades contiene elementos que no son numéricos.")
+        return None
 
-    # Frecuencia relativa, es la cada frecuencia absoluta obtenidad, dividida por la suma total de la cantidad de datos, es decir, la frecuencia absoluta de cada dato dividida por la suma total de las frecuencias absolutas.
-    dataFrame["ri"] = dataFrame["fi"] / dataFrame["fi"].sum()
+    # Crear DataFrame con las listas proporcionadas
+    df = pd.DataFrame({"edades": edades, "fi": fi})
 
-    # Frecuencia acumulada de la frecuencia relativa, es la suma acumulada de las frecuencias relativas.
-    dataFrame["Ri"] = dataFrame["ri"].cumsum()
+    # Calcular Frecuencia absoluta acumulada: Suma de las frecuencias absolutas de las edades anteriores.
+    df["Fi"] = df["fi"].cumsum()
+    # Calcular Frecuencia relativa simple: Frecuencia absoluta de una edad dividida entre la suma de todas las frecuencias absolutas.
+    df["ri"] = (df["fi"] / df["fi"].sum()).round(3)
+    # Calcular Frecuencia relativa acumulada: Suma de las frecuencias relativas de las edades anteriores.
+    df["Ri"] = df["ri"].cumsum()
+    # Calcular Frecuencia porcentual simple: Frecuencia relativa simple multiplicada por 100.
+    df["pi%"] = df["ri"] * 100
+    # Calcular Frecuencia porcentual acumulada: Suma de las frecuencias porcentuales de las edades anteriores.
+    df["Pi%"] = df["pi%"].cumsum()
 
-    # Frecuencia relativa porcentual, es la frecuencia relativa multiplicada por 100.
-    dataFrame["pi%"] = dataFrame["ri"] * 100
+    return df
 
-    # Frecuencia acumulada de la frecuencia relativa porcentual, es la suma acumulada de las frecuencias relativas porcentuales.
-    dataFrame["Pi%"] = dataFrame["pi%"].cumsum()
 
-    # Mostramos el resultado por consola e informamos a la persona que el contenido se ha añadido en su portapapeles.
-    print(dataFrame)
-    dataFrame.to_clipboard(excel=True)
-    print("El contenido se ha añadido en su portapapeles")
-    
-
-#Obtenemos una lista con las edades de las personas en base al archivo leido.
-
-analisis_estadistico(edades)
+# Crear DataFrame y aplicar análisis estadístico
+print(analisis_estadistico(edades))
